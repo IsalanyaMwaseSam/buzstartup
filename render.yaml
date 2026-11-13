@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: business-hub-platform
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: R2_ACCOUNT_ID
+        value: 6c927077f0250b814380c346724551fb
+      - key: R2_ACCESS_KEY_ID
+        value: 797eb78750487ed4527884fd2d2f9c1b
+      - key: R2_SECRET_ACCESS_KEY
+        value: 47ea08c3c5e3064640690572a9376ef4ec1710719293e2c302810dbf7fb3b4a7
+      - key: R2_BUCKET_NAME
+        value: business
