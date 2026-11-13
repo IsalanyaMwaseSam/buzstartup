@@ -17,12 +17,26 @@ import type { RegionInfo } from '../utils/regions';
 
 interface AuthModalProps {
   isOpen: boolean;
+  initialTab?: 'login' | 'register';
   onClose: () => void;
   onAuthSuccess: (business: BusinessProfile, email: string) => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess }) => {
-  const [tab, setTab] = useState<'login' | 'register'>('login');
+export const AuthModal: React.FC<AuthModalProps> = ({
+  isOpen,
+  initialTab = 'login',
+  onClose,
+  onAuthSuccess,
+}) => {
+  const [tab, setTab] = useState<'login' | 'register'>(initialTab);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setTab(initialTab);
+      setErrorMsg(null);
+      setSuccessMsg(null);
+    }
+  }, [isOpen, initialTab]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);

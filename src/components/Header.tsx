@@ -12,6 +12,7 @@ interface HeaderProps {
   onOpenSettings: () => void;
   onOpenAuthModal?: () => void;
   onLogout?: () => void;
+  onReturnToLanding?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,6 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSettings,
   onOpenAuthModal,
   onLogout,
+  onReturnToLanding,
 }) => {
   const getTabTitle = (tab: NavTab) => {
     switch (tab) {
@@ -76,6 +78,17 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Action Buttons */}
         <div className="flex items-center space-x-2">
+          {onReturnToLanding && (
+            <button
+              onClick={onReturnToLanding}
+              title="View product landing page"
+              className="hidden xl:inline-flex items-center space-x-1 px-2.5 py-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-50 hover:bg-stone-100 rounded-lg border border-stone-200 transition-colors cursor-pointer"
+            >
+              <Store className="w-3.5 h-3.5 text-stone-500" />
+              <span>Landing Page</span>
+            </button>
+          )}
+
           {/* Cloud Auth / Account Status */}
           {userEmail ? (
             <div className="hidden lg:flex items-center space-x-2 px-2.5 py-1 bg-stone-50 border border-stone-200 rounded-lg text-xs">

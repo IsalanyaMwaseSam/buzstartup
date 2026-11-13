@@ -12,6 +12,7 @@ import { SettingsView } from './views/SettingsView';
 import { PublicReceiptView } from './views/PublicReceiptView';
 import { ReceiptModal } from './components/ReceiptModal';
 import { PaymentLinkModal } from './components/PaymentLinkModal';
+import { LandingPageView } from './views/LandingPageView';
 import { AuthModal } from './components/AuthModal';
 import {
   defaultProfile,
@@ -38,6 +39,8 @@ import {
 } from './utils/api';
 
 export function App() {
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   const [currentTab, setCurrentTab] = useState<NavTab>('sales');
   const [profile, setProfile] = useState<BusinessProfile>(getProfile);
   const [orders, setOrders] = useState<Order[]>(getOrders);
@@ -79,6 +82,7 @@ export function App() {
           setupCompleted: true,
         };
         setProfile(cloudBiz);
+        setViewMode('app');
 
         // Fetch cloud orders
         fetchOrdersApi().then((cloudOrders) => {
@@ -336,6 +340,7 @@ export function App() {
   const handleAuthSuccess = (newProfile: BusinessProfile, email: string) => {
     setProfile(newProfile);
     setUserEmail(email);
+    setViewMode('app');
     fetchOrdersApi().then((cloudOrders) => {
       if (cloudOrders && cloudOrders.length > 0) {
         setOrders(cloudOrders);
@@ -350,6 +355,7 @@ export function App() {
     setOrders(seedOrders);
     setCustomers(seedCustomers);
     setExpenses(seedExpenses);
+    setViewMode('landing');
   };
 
   const handleResetData = () => {
@@ -377,6 +383,33 @@ export function App() {
     );
   }
 
+  // If visitor is on the Landing Page, render full promotional product showcase
+  if (viewMode === 'landing') {
+    return (
+      <>
+        <LandingPageView
+          onGetStarted={() => {
+            setAuthModalTab('register');
+            setIsAuthModalOpen(true);
+          }}
+          onSignIn={() => {
+            setAuthModalTab('login');
+            setIsAuthModalOpen(true);
+          }}
+          onEnterDemo={() => {
+            setViewMode('app');
+          }}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          initialTab={authModalTab}
+          onClose={() => setIsAuthModalOpen(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      </>
+    );
+  }
+
   const pendingOrdersCount = orders.filter((o) => o.status !== 'Completed' || !o.isPaid).length;
 
   return (
@@ -389,8 +422,12 @@ export function App() {
         pendingOrdersCount={pendingOrdersCount}
         userEmail={userEmail}
         onOpenPaymentLink={() => setShowPaymentLinkModal(true)}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenAuthModal={() => {
+          setAuthModalTab('login');
+          setIsAuthModalOpen(true);
+        }}
         onLogout={handleLogout}
+        onReturnToLanding={() => setViewMode('landing')}
       />
 
       {/* Main Content Area */}
@@ -402,8 +439,12 @@ export function App() {
           onOpenNewSale={() => setCurrentTab('sales')}
           onOpenPaymentLink={() => setShowPaymentLinkModal(true)}
           onOpenSettings={() => setCurrentTab('settings')}
-          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          onOpenAuthModal={() => {
+            setAuthModalTab('login');
+            setIsAuthModalOpen(true);
+          }}
           onLogout={handleLogout}
+          onReturnToLanding={() => setViewMode('landing')}
         />
 
         <main className="flex-1 w-full max-w-7xl mx-auto">
@@ -471,6 +512,7 @@ export function App() {
       {/* Secure Auth & Business Registration Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
+        initialTab={authModalTab}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
       />

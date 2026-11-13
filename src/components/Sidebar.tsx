@@ -27,6 +27,7 @@ interface SidebarProps {
   onOpenPaymentLink: () => void;
   onOpenAuthModal?: () => void;
   onLogout?: () => void;
+  onReturnToLanding?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -38,6 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenPaymentLink,
   onOpenAuthModal,
   onLogout,
+  onReturnToLanding,
 }) => {
   const navItems = [
     { id: 'sales' as NavTab, label: 'Point of Sale', hint: 'Fast cashier', icon: ShoppingBag },
@@ -170,6 +172,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {profile.currency} ({profile.currencyCode})
           </span>
         </div>
+
+        {onReturnToLanding && (
+          <button
+            onClick={onReturnToLanding}
+            className="w-full text-center text-[11px] font-semibold text-stone-500 hover:text-stone-900 pt-1 cursor-pointer"
+          >
+            ← View BuzStartup Landing Page
+          </button>
+        )}
       </div>
     </aside>
   );
